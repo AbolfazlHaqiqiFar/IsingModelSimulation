@@ -1,5 +1,7 @@
 
 # Russell Kajouri & Abolfazl Haqiqifar
+#Imail : afzhqq@gmail.com
+
 
 from spin import Spin
 import numpy as np
@@ -141,3 +143,5 @@ class Lattice():
         else :
             return True if np.random.random() < np.exp(-deltaE / temp) else False
     ###########################################################################################
+    def GetsBackSpin(self, i):
+        return self.L[i].direction

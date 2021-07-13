@@ -1,3 +1,5 @@
+# Russell Kajouri & Abolfazl Haqiqifar
+#Imail : afzhqq@gmail.com
 
 from lattice import Lattice
 import matplotlib.pyplot as plt
@@ -67,3 +69,16 @@ class Medium:
                 
 
 		    return (ave_totalE / self.Steps) ,(ave_orderP / self.Steps) 
+###########################################################################################
+
+    def WriteTheLattice(self, name="lattice.data", wformat="txt"):
+        if wformat == "txt":
+            out = open(name, 'w')
+            out.write("{}".format(self.latticeSize))
+            for i in range(self.latticeSize):
+                out.write(",{}".format(self.lattice.GetsBackSpin(i)))
+                pass
+            out.close()
+            print("### The lattice has been dumped by name: ", name)
+        pass
+
