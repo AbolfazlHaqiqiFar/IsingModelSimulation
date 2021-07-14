@@ -2,18 +2,29 @@
 
 
 from medium import Medium
-import matplotlib.pyplot as plt
-import numpy as np
 
 def main():
-    for i in np.arange(0, 0.5, 0.01):
-        medium = Medium(num = 64, dim = 1, initial_config="stochastic",\
-            initial_direction= -1, J=1, steps = 1000, temp = i )
+    out = open("data.ising", "w")
 
-        aveE , aveP = medium.Evolution(display=False)
-        print("%-5.3f %-5.3f %-5.3f" %(i, aveE, aveP))
+    dt = 0.010
+    for t in range(27,40):
+        print("temp: {:6.4f}".format(t*dt))
+        medium = Medium(num = 64,
+				dim = 1,
+				initial_config = "ordered",
+				inputFilename="lattice.data",
+				outputfilename="trajectory.xyz",
+				dump_step=0,
+				initial_direction = 1,
+				J = 1,
+				steps = 5000,
+				temp = t*dt,
+				display=False )
+
+        aveE, varE, aveP, varP = medium.Evolution(display=False)
+        print("%-5.3f\t%-5.3f\t%-5.3f\t%-5.3f\t%-5.3f" %(t*dt,aveE,varE,aveP,varP), file=out)
         medium.WriteTheLattice()
         print("#", "-"*70)
-        
     
-main()
+if "__main__"==__name__:
+        main()

@@ -13,7 +13,7 @@ class Lattice():
 #Lattice is a number of Spins together.
     ###########################################################################################
 
-    def __init__(self, n, d , mode, inputfile, dirr, J, latticedisplay)-> None:
+    def __init__(self, n, d , mode, inputfile, dirr, J, latticeDisplay)-> None:
 
         """
         n is Number of spins 
@@ -31,7 +31,7 @@ class Lattice():
             self.ordered_localization1D(dirr)
         elif mode == "inputfile":
 	        self.readInputFile(inputfile)   
-        if latticedisplay :
+        if latticeDisplay :
             self.display()
         pass
     #1##########################################################################################
@@ -118,8 +118,8 @@ class Lattice():
 
         # Calculation of single Spin energy
 
-        return -1 * self.Jfactor * ((self.L[l].direction * self.L[self.period(l-1)].direction) +\
-            (self.L[l].direction * self.L[self.period(l+1)].direction))
+        return -1 * self.Jfactor * self.L[l].direction *\
+				(self.L[self.period(l-1)].direction + self.L[self.period(l+1)].direction)
     ###########################################################################################
 
     def flipSpin(self, l):
@@ -159,19 +159,19 @@ class Lattice():
         else:
             exit()
 	###########################################################################################
-	def GetVariance(self, Xbar, X):
+    def GetVariance(self, Xbar, X):
          XVar = 0
-        for i in range(len(X)):
+         for i in range(len(X)):
             XVar += (X[i] - Xbar) * (X[i] - Xbar)
-        return XVar / self.number
+         return XVar / self.number
 	###########################################################################################
-	def dumpXYZ(self, output, dump_s, total_s, iterator):
+    def dumpXYZ(self, output, dump_s, total_s, iterator):
          dump = open(output, "a+")
-        if iterator % dump_s == 0 or iterator == total_s - 1:
+         if iterator % dump_s == 0 or iterator == total_s - 1:
             dump.write("{}\n".format(self.number))
             dump.write("spin_dir xloc yloc zloc\n")
             for i in range(self.number):
                 dump.write("%d %d %d %d\n" %(self.L[i].direction, i, 0, 0))
 
-		dump.close()
+         dump.close()
     ###########################################################################################
