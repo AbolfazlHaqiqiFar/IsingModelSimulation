@@ -58,17 +58,26 @@ class Medium:
             return self.lattice.energy(), self.lattice.polarization()
 ###########################################################################################
 
-    def Evolution(self):
-		    ave_totalE = 0
-		    ave_orderP = 0
-		    for s in range(self.Steps):
-			    totalE, orderP = self.MonteCarloSteps()
-			    ave_totalE += totalE
-			    ave_orderP += orderP
-			    #print("%-4.d %-5.3f %-5.3f"%(s, totalE, orderP))
+    def Evolution(self, display=False):
+        
+        print("the relaxation time has been started. ")
+        relaxation_steps = int(self.Steps / 5)
+        for rs in range(relaxation_steps):
+            self.MonteCarloSteps()
+
+        ave_totalE = 0
+        ave_orderP = 0
+        for s in range(self.Steps):
+	        totalE, orderP = self.MonteCarloSteps()
+                ave_totalE += totalE
+                ave_orderP += orderP
+                if display:
+                        print("%-4.d %-5.3f %-5.3f"%(s, totalE, orderP))
                 
 
-		    return (ave_totalE / self.Steps) ,(ave_orderP / self.Steps) 
+                return (ave_totalE / self.Steps) ,(ave_orderP / self.Steps) 
+
+
 ###########################################################################################
 
     def WriteTheLattice(self, name="lattice.data", wformat="txt"):

@@ -5,6 +5,7 @@
 
 from spin import Spin
 import numpy as np
+import time
 
 
 
@@ -12,7 +13,7 @@ class Lattice():
 #Lattice is a number of Spins together.
     ###########################################################################################
 
-    def __init__(self, n, d , mode, dirr, J)-> None:
+    def __init__(self, n, d , mode, inputfile, dirr, J, latticedisplay)-> None:
 
         """
         n is Number of spins 
@@ -21,17 +22,17 @@ class Lattice():
              coupled to each other – how much they want to (anti-)align
              The sign of J tells you whether neighbors prefer to align or to anti-align.
               """
-
+        np.random.seed(int(time.time()))
         self.Jfactor = J
         self.number = n
         self.L = []
 
         if mode == "ordered":
-		        self.ordered_localization1D(dirr)
-        else:
-		        self.stochastic_localization1D()
-    
-		#self.display()
+            self.ordered_localization1D(dirr)
+        elif mode == "inputfile":
+	        self.readInputFile(inputfile)   
+        if latticedisplay :
+            self.display()
         pass
     #1##########################################################################################
     """
@@ -143,5 +144,34 @@ class Lattice():
         else :
             return True if np.random.random() < np.exp(-deltaE / temp) else False
     ###########################################################################################
+
     def GetsBackSpin(self, i):
         return self.L[i].direction
+    ###########################################################################################
+
+    def readInputFile(self, filename):
+        read = open(filename, 'r')
+        str_L = read.readline().split(',')
+        temp_lattice=[int(x) for x in str_L]
+        if len(temp_lattice) - 1 == temp_lattice[0]:
+            for i in range(self.number):
+                self.L.append(Spin(temp_lattice[i + 1]))
+        else:
+            exit()
+	###########################################################################################
+	def GetVariance(self, Xbar, X):
+         XVar = 0
+        for i in range(len(X)):
+            XVar += (X[i] - Xbar) * (X[i] - Xbar)
+        return XVar / self.number
+	###########################################################################################
+	def dumpXYZ(self, output, dump_s, total_s, iterator):
+         dump = open(output, "a+")
+        if iterator % dump_s == 0 or iterator == total_s - 1:
+            dump.write("{}\n".format(self.number))
+            dump.write("spin_dir xloc yloc zloc\n")
+            for i in range(self.number):
+                dump.write("%d %d %d %d\n" %(self.L[i].direction, i, 0, 0))
+
+		dump.close()
+    ###########################################################################################
