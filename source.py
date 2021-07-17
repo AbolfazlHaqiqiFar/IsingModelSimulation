@@ -7,17 +7,16 @@ def main():
     out = open("data.ising", "w")
 
     dt = 0.010
-    for t in range(27,40):
+    for t in range(0,40):
         print("temp: {:6.4f}".format(t*dt))
-        medium = Medium(num = 64,
+        medium = Medium(num = 128,
 				dim = 1,
-				initial_config = "ordered",
+				initial_config = "inputfile",
 				inputFilename="lattice.data",
 				outputfilename="trajectory.xyz",
 				dump_step=0,
 				initial_direction = 1,
-				J = 1,
-				steps = 5000,
+				steps = 250000,
 				temp = t*dt,
 				display=False )
 
@@ -27,4 +26,4 @@ def main():
         print("#", "-"*70)
     
 if "__main__"==__name__:
-        main()
+        main()  
