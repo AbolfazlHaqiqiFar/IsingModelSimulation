@@ -25,12 +25,22 @@ class Lattice():
         np.random.seed(int(time.time()))
         self.Jfactor = J
         self.number = n
+        self.dim = d # System dimiension
         self.L = []
 
+        # Different modes of the system in terms of order and dimension
         if mode == "ordered":
-            self.ordered_localization1D(dirr)
+            if self.dim == 1:
+                self.ordered_localization1D(dirr)
+            if self.dim == 2:
+                self.ordered_localization2D(dirr)
         elif mode == "inputfile":
-	        self.readInputFile(inputfile)   
+	        self.readInputFile(inputfile) 
+        else:
+            if self.dim == 1:
+                self.stochastic_localization1D()
+            elif self.dim == 2:
+                self.stochastic_localization2D()
         if latticeDisplay :
             self.display()
         pass
@@ -41,29 +51,55 @@ class Lattice():
         2- Regularly and in a specific direction(ordered) --> Ferromagnetism
     The end result has nothing to do whit the initial condition
     """
-    def stochastic_localization1D(self):
+    def stochastic_localization1D(self):# for 1 dimiension
         for l in range(self.number):
             self.L.append(Spin(np.random.randint(0,2)*2-1))   
                 # Here we need discrete random addiction (0 or 1)  
             pass
         pass
+    ############################################################################################
+
+    def stochastic_localization1D(self):# for 2 dimiension
+        for l in range(self.number):
+            dummy = []
+            for k in range(self.number):
+                dummy.append(Spin(np.random.randint(0,2)*2-1))
+                pass
+            #end of the second loop
+            self.L.append(dummy)
+
     #2##########################################################################################
 
-    def ordered_localization1D(self, dirr):
+    def ordered_localization1D(self, dirr):# for 1 dimiension
         for l in range(self.number):
             self.L.append(Spin(dirr))
             pass
         pass
     ###########################################################################################
 
+    def ordered_localization2D(self, dirr):# for 2 dimiension
+        for l in range(self.number):
+            dummy = []
+            for k in range(self.number):
+                dummy.append(Spin(dirr))
+            self.L.append(dummy)    
+            pass
+        pass   
+    ###########################################################################################
+
     def display(self):
 
         # Depending on the dimension the system show different behaviors
-
-        for l in range(self.number):
-                print(self.L[l].direction, end= "")
+        if self.dim == 1:
+            for l in range(self.number):
+                    print(self.L[l].direction, end= "")
         print()
-        pass
+        
+        if self.dim == 2:
+            for l in range(self.number):
+                for k in range(self.number):
+                    print(self.L[l][k].direction, end= "")
+                print(end = "\n")
     ###########################################################################################
 
     def energy(self):
@@ -75,13 +111,24 @@ class Lattice():
               H = -J sum_i=0^N-1 (L_i)*(L_i+1)
               """
         ene = 0
-        for l in range(self.number):
-            # ene += self.L[l].direction * self.L[self.period(l+1)].direction
-            # ene += self.L[l].direction * self.L[self.period(l-1)].direction
-            #or
-            ene += self.energyOf(l)#instead of the abov calculations, use the energyof function
-        return ene * 0.5 #TODO
-        pass
+        if self.dim == 1:
+            for l in range(self.number):
+                # ene += self.L[l].direction * self.L[self.period(l+1)].direction
+                # ene += self.L[l].direction * self.L[self.period(l-1)].direction
+                #or
+                ene += self.energyOf_1D(l)#instead of the abov calculations, use the energyof function
+            return (ene * 0.5) / self.number 
+                #0.5 Because each spin has two neighbors
+        elif self.dim == 2:
+            for l in range(self.number):
+                for k in range(self.number):
+                    ene += self.energyOf_2D(l,k)
+            return (ene * 0.25) / self.number * self.number
+                #0.25 Because each spin has four neighbors 
+
+
+         
+    
     ###########################################################################################
 
     def period(self, n):
