@@ -153,20 +153,32 @@ class Lattice():
         The initial value of the function is zero 
         Polarization should be close to zero
             """
-
-        polariz = 0.0
-        for l in range(self.number):
-            polariz += self.L[l].direction
-            pass
-        return float(polariz / self.number)
+        if self.dim == 1:
+            polariz = 0.0
+            for l in range(self.number):
+                polariz += self.L[l].direction
+            return float(polariz / self.number)
+        if self.dim == 2:
+            for l in range(self.number):
+                for k in range(self.number):
+                    polariz += self.L[l][k].direction
+            return float(polariz / (self.number * self.number))
     ###########################################################################################
 
-    def energyOf(self, l):
+    def energyOf_1D(self, l):
 
         # Calculation of single Spin energy
 
         return -1 * self.Jfactor * self.L[l].direction *\
 				(self.L[self.period(l-1)].direction + self.L[self.period(l+1)].direction)
+    
+    def energyOf_2D(self, l, k):
+
+        # Calculation of single Spin energy
+
+        return -1 * self.Jfactor * self.L[l].direction *\
+				(self.L[self.period(l-1)][k].direction + self.L[self.period(l+1)][k].direction+ \
+                    self.L[l][self.period(k-1)].direction + self.L[l][self.period(k+1)].direction) 
     ###########################################################################################
 
     def flipSpin(self, l):
