@@ -26,6 +26,7 @@ class Medium:
         self.latticeSize = num
         self.output = outputfilename
         self.dump_s = dump_step
+        self.dim = dim
         self.lattice = Lattice(n = num, d = dim, mode = initial_config,\
             inputfile = inputFilename, dirr = initial_direction, J = J, latticeDisplay = display)
         #print("ener: ", Lattice.energy())
@@ -40,20 +41,30 @@ class Medium:
             and calculate its energy,Then change its direction 
             and calculate its energy again,after then calculate 
             the difference between two energies(deltaE)
-            """
-        spin = self.lattice.chooseSpin()
-        energy_before_flip = self.lattice.energyOf(spin)
-        self.lattice.flipSpin(spin)
-        energy_after_flip  = self.lattice.energyOf(spin)
+           """
+        spin, row, clmn = 0, 0, 0
+        if self.dim == 1:
+            spin = self.lattice.chooseSpin()
+            energy_before_flip = self.lattice.energyOf_1D(spin)
+            self.lattice.flipSpin_1D(spin)
+            energy_after_flip  = self.lattice.energyOf_1D(spin)
+
+        elif self.dim == 2:
+            row = self.lattice.chooseSpin()
+            clmn = self.lattice.chooseSpin()
+            energy_before_flip = self.lattice.energyOf_2D(row, clmn)
+            self.lattice.flipSpin_2D(row, clmn)
+            energy_after_flip  = self.lattice.energyOf_2D(row,clmn)
+
         deltaE = energy_after_flip - energy_before_flip
         """
         If deltaE > 0 --> rejected in Monte Carlo 
             """
-        if deltaE > 0:
-            #Take a Metropolice Step
-            ans = self.lattice.MetropoliceStep(self.Temp, deltaE) #True or False
-            if ans == False:
-                self.lattice.flipSpin(spin)
+        if deltaE > 0 and not self.lattice.MetropoliceStep(self.Temp, deltaE):
+            if self.dim == 1:
+                self.lattice.flipSpin_1D(spin)
+            elif self.dim == 2:
+                self.lattice.flipSpin_2D(row,clmn)
 ###########################################################################################
 
     def MonteCarloSteps(self):
@@ -63,13 +74,15 @@ class Medium:
 ###########################################################################################
 
     def Evolution(self, display=False):
-		# we run the system for 20% of the monte carlo steps as the relaxation time
-		# and won't insert it in our calculation
+        """
+		 we run the system for 20% of the monte carlo steps as the relaxation time
+		 and won't insert it in our calculation
+        """
         print("# The relaxation time has been started.")
         relaxation_steps = int(self.Steps / 5)
         for rs in range(relaxation_steps):
             self.MonteCarloSteps()
-		# ---------------------------------------------
+		
 		# Now we start to calculate the energy and the magnerization of the system
 		# for the given Monte Carlos steps
 
@@ -103,11 +116,11 @@ class Medium:
 ###########################################################################################
 
     def WriteTheLattice(self, name="lattice.data", wformat="txt"):
-        if wformat == "txt":
+        if self.dim == 1:
             out = open(name, 'w')
             out.write("{}".format(self.latticeSize))
             for i in range(self.latticeSize):
-                out.write(",{}".format(self.lattice.GetsBackSpin(i)))
+                out.write(",{}".format(self.lattice.GetsBackSpin_1D(i)))
                 pass
             out.close()
             print("### The lattice has been dumped by name: ", name)

@@ -16,7 +16,7 @@ def main():
 				outputfilename="trajectory.xyz",
 				dump_step=0,
 				initial_direction = 1,
-				steps = 250000,
+				steps = 25,
 				temp = t*dt,
 				display=False )
 

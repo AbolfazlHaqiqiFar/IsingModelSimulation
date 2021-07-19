@@ -89,7 +89,7 @@ class Lattice():
 
     def display(self):
 
-        # Depending on the dimension the system show different behaviors
+        '''Depending on the dimension the system show different behaviors'''
         if self.dim == 1:
             for l in range(self.number):
                     print(self.L[l].direction, end= "")
@@ -167,28 +167,33 @@ class Lattice():
 
     def energyOf_1D(self, l):
 
-        # Calculation of single Spin energy
+        '''Calculation of single Spin energy'''
 
         return -1 * self.Jfactor * self.L[l].direction *\
 				(self.L[self.period(l-1)].direction + self.L[self.period(l+1)].direction)
     
     def energyOf_2D(self, l, k):
 
-        # Calculation of single Spin energy
+        ''' Calculation of single Spin energy'''
 
         return -1 * self.Jfactor * self.L[l].direction *\
 				(self.L[self.period(l-1)][k].direction + self.L[self.period(l+1)][k].direction+ \
                     self.L[l][self.period(k-1)].direction + self.L[l][self.period(k+1)].direction) 
     ###########################################################################################
 
-    def flipSpin(self, l):
-        # Changes the direction of the spin
+    def flipSpin_1D(self, l):
+        '''Changes the direction of the spin in one dimiension'''
         self.L[l].direction *= -1
     ###########################################################################################
 
+    def flipSpin_2D(self, l, k):
+        '''Changes the direction of the spin in 2 dimiension'''
+        self.L[l][k].direction *= -1
+    ###########################################################################################
+
     def chooseSpin(self):
-         # Selects a spin at random
-            return np.random.randint(0, self.number)
+         '''Selects a spin at random'''
+         return np.random.randint(0, self.number)
     ###########################################################################################
     
     def MetropoliceStep(self, temp, deltaE):
@@ -203,9 +208,14 @@ class Lattice():
         else :
             return True if np.random.random() < np.exp(-deltaE / temp) else False
     ###########################################################################################
-
-    def GetsBackSpin(self, i):
-        return self.L[i].direction
+    
+    def GetsBackSpin_1D(self, l):
+        """Return the spin to its orginal state for one dimiension"""
+        return self.L[l].direction
+    
+    def GetsBackSpin_2D(self, l, k):
+        """Return the spin to its orginal state for 2 dimiension"""
+        return self.L[l][k].direction
     ###########################################################################################
 
     def readInputFile(self, filename):
@@ -218,11 +228,14 @@ class Lattice():
         else:
             exit()
 	###########################################################################################
-    def GetVariance(self, Xbar, X):
-         XVar = 0
-         for i in range(len(X)):
+    def GetVariance(self, Xbar, X): 
+        '''Takes Variance from input values
+                input values include the average and individual data
+        '''
+        XVar = 0
+        for i in range(len(X)):
             XVar += (X[i] - Xbar) * (X[i] - Xbar)
-         return XVar / self.number
+        return XVar / self.number
 	###########################################################################################
     def dumpXYZ(self, output, dump_s, total_s, iterator):
          dump = open(output, "a+")
