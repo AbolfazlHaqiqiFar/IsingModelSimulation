@@ -242,10 +242,18 @@ class Lattice():
     def dumpXYZ(self, output, dump_s, total_s, iterator):
          dump = open(output, "a+")
          if iterator % dump_s == 0 or iterator == total_s - 1:
-            dump.write("{}\n".format(self.number))
-            dump.write("spin_dir xloc yloc zloc\n")
-            for i in range(self.number):
-                dump.write("%d %d %d %d\n" %(self.L[i].direction, i, 0, 0))
+            if self.dim == 1:
+                dump.write("{}\n".format(self.number))
+                dump.write("spin_dir xloc yloc zloc\n")
+                for i in range(self.number):
+                    dump.write("%d %d %d %d\n" %(self.L[i].direction, i, 0, 0))
+
+            if self.dim == 2:
+                dump.write("{}\n".format(self.number * self.number))
+                dump.write("spin_dir xloc yloc zloc\n")
+                for i in range(self.number):
+                    for j in range(self.number):
+                        dump.write("%d %d %d %d\n" %(self.L[i][j].direction, j, -i, 0))
 
          dump.close()
     ###########################################################################################
