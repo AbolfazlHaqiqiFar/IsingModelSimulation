@@ -10,7 +10,9 @@ import time
 
 
 class Lattice():
-#Lattice is a number of Spins together.
+    '''
+    Lattice is a number of Spins together.
+        '''
     ###########################################################################################
 
     def __init__(self, n, d , mode, inputfile, dirr, J, latticeDisplay)-> None:
@@ -55,11 +57,11 @@ class Lattice():
         for l in range(self.number):
             self.L.append(Spin(np.random.randint(0,2)*2-1))   
                 # Here we need discrete random addiction (0 or 1)  
-            pass
+            
         pass
     ############################################################################################
 
-    def stochastic_localization1D(self):# for 2 dimiension
+    def stochastic_localization2D(self):# for 2 dimiension
         for l in range(self.number):
             dummy = []
             for k in range(self.number):
@@ -98,7 +100,7 @@ class Lattice():
         if self.dim == 2:
             for l in range(self.number):
                 for k in range(self.number):
-                    print(self.L[l][k].direction, end= "")
+                    print('%-1d'%self.L[l][k].direction, end= "")
                 print(end = "\n")
     ###########################################################################################
 
@@ -153,8 +155,8 @@ class Lattice():
         The initial value of the function is zero 
         Polarization should be close to zero
             """
+        polariz = 0.0
         if self.dim == 1:
-            polariz = 0.0
             for l in range(self.number):
                 polariz += self.L[l].direction
             return float(polariz / self.number)
@@ -176,7 +178,7 @@ class Lattice():
 
         ''' Calculation of single Spin energy'''
 
-        return -1 * self.Jfactor * self.L[l].direction *\
+        return -1 * self.Jfactor * self.L[l][k].direction *\
 				(self.L[self.period(l-1)][k].direction + self.L[self.period(l+1)][k].direction+ \
                     self.L[l][self.period(k-1)].direction + self.L[l][self.period(k+1)].direction) 
     ###########################################################################################
