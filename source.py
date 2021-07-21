@@ -14,15 +14,18 @@ def main():
 				dim = 2,
 				initial_config = "ordered",
 				inputFilename="lattice.data",
-				outputfilename="trajectory.xyz",
+				outputfilename='trajectory.xyz',
 				dump_step=0,
 				initial_direction = 1,
-				steps = 5000,
+        J= 1,
+        h = 0,
+				steps = 50,
 				temp = t*dt,
 				display=True )
 
         aveE, varE, aveP, varP = medium.Evolution(display=False)
         print("%-5.3f\t%-5.3f\t%-5.3f\t%-5.3f\t%-5.3f" %(t*dt,aveE,varE,aveP,varP), file=out)
+
         medium.WriteTheLattice()
         print("#", "-"*70)
         pass

@@ -9,7 +9,7 @@ class Medium:
 ###########################################################################################
 
     def __init__(self, num= 64, dim=1, initial_config= 'stochastic', inputFilename="lattice.data",\
-                        initial_direction= 1, J=1, steps= 100, temp= 0,  display = False,\
+                        initial_direction = 1, J=1, h = 0, steps= 100, temp = 0,  display = False,\
                                 outputfilename="trajectory.xyz", dump_step = 100):
 
         """
@@ -28,7 +28,7 @@ class Medium:
         self.dump_s = dump_step
         self.dim = dim
         self.lattice = Lattice(n = num, d = dim, mode = initial_config,\
-            inputfile = inputFilename, dirr = initial_direction, J = J, latticeDisplay = display)
+            inputfile = inputFilename, dirr = initial_direction, J = J, h= h, latticeDisplay = display)
         #print("ener: ", Lattice.energy())
         #print("polar: ", Lattice.polarization())
         #print(steps, temp)

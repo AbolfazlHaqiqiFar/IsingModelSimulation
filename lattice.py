@@ -15,7 +15,7 @@ class Lattice():
         '''
     ###########################################################################################
 
-    def __init__(self, n, d , mode, inputfile, dirr, J, latticeDisplay)-> None:
+    def __init__(self, n, d , mode, inputfile, dirr, J, h, latticeDisplay)-> None:
 
         """
         n is Number of spins 
@@ -26,6 +26,7 @@ class Lattice():
               """
         np.random.seed(int(time.time()))
         self.Jfactor = J
+        self.magfactor = h
         self.number = n
         self.dim = d # System dimiension
         self.L = []
@@ -118,13 +119,14 @@ class Lattice():
                 # ene += self.L[l].direction * self.L[self.period(l+1)].direction
                 # ene += self.L[l].direction * self.L[self.period(l-1)].direction
                 #or
-                ene += self.energyOf_1D(l)#instead of the abov calculations, use the energyof function
+                ene += self.energyOf_1D(l) + self.magfactor * self.polarization()
+                #instead of the abov calculations, use the energyof function
             return (ene * 0.5) / self.number 
                 #0.5 Because each spin has two neighbors
         elif self.dim == 2:
             for l in range(self.number):
                 for k in range(self.number):
-                    ene += self.energyOf_2D(l,k)
+                    ene += self.energyOf_2D(l,k) + self.magfactor * self.polarization()
             return (ene * 0.25) / self.number * self.number
                 #0.25 Because each spin has four neighbors 
 
