@@ -48,21 +48,30 @@ class Lattice():
             self.display()
         pass
     #1##########################################################################################
-    """
-    Spins can have one of the following initial conditions:
-        1- Radomly and in a random direction(stochastic) --> Paramagnetism
-        2- Regularly and in a specific direction(ordered) --> Ferromagnetism
-    The end result has nothing to do whit the initial condition
-    """
-    def stochastic_localization1D(self):# for 1 dimiension
+        """
+        Spins can have one of the following initial conditions:
+            1- Radomly and in a random direction(stochastic) --> Paramagnetism
+            2- Regularly and in a specific direction(ordered) --> Ferromagnetism
+        The end result has nothing to do whit the initial condition
+        """
+    def stochastic_localization1D(self):
+        '''
+        Radomly and in a random direction(stochastic) --> Paramagnetism
+
+        for 1 dimiension
+        '''
         for l in range(self.number):
             self.L.append(Spin(np.random.randint(0,2)*2-1))   
-                # Here we need discrete random addiction (0 or 1)  
-            
+                # Here we need discrete random addiction (0 or 1)   
         pass
     ############################################################################################
 
-    def stochastic_localization2D(self):# for 2 dimiension
+    def stochastic_localization2D(self):# 
+        '''
+        Radomly and in a random direction(stochastic) --> Paramagnetism 
+
+        for 2 dimiension
+        '''
         for l in range(self.number):
             dummy = []
             for k in range(self.number):
@@ -73,14 +82,22 @@ class Lattice():
 
     #2##########################################################################################
 
-    def ordered_localization1D(self, dirr):# for 1 dimiension
+    def ordered_localization1D(self, dirr):
+        '''
+        Regularly and in a specific direction(ordered) --> Ferromagnetism
+
+        for 1 dimiension
+        '''
         for l in range(self.number):
             self.L.append(Spin(dirr))
-            pass
-        pass
     ###########################################################################################
 
-    def ordered_localization2D(self, dirr):# for 2 dimiension
+    def ordered_localization2D(self, dirr):
+        '''
+        Regularly and in a specific direction(ordered) --> Ferromagnetism
+
+        for 2 dimiension
+        '''
         for l in range(self.number):
             dummy = []
             for k in range(self.number):
@@ -119,15 +136,15 @@ class Lattice():
                 # ene += self.L[l].direction * self.L[self.period(l+1)].direction
                 # ene += self.L[l].direction * self.L[self.period(l-1)].direction
                 #or
-                ene += self.energyOf_1D(l) + self.magfactor * self.polarization()
+                ene += -self.L[l].direction * self.energy1D_Of(l)
                 #instead of the abov calculations, use the energyof function
             return (ene * 0.5) / self.number 
                 #0.5 Because each spin has two neighbors
-        elif self.dim == 2:
+        elif self.dim==2:
             for l in range(self.number):
                 for k in range(self.number):
-                    ene += self.energyOf_2D(l,k) + self.magfactor * self.polarization()
-            return (ene * 0.25) / self.number * self.number
+                    ene += -self.L[l][k].direction*self.energy2D_Of(l,k)
+            return (ene * 0.25) / (self.number * self.number)
                 #0.25 Because each spin has four neighbors 
 
 
@@ -142,12 +159,7 @@ class Lattice():
           it returns it to the first ---> If the particles are N ==> L_N = L_0 
             """
 
-        if n == self.number:
-            return n % self.number
-        elif n == -1:
-            return self.number - 1
-        else:
-            return n
+        return n % self.number
     ###########################################################################################
 
     def polarization(self):
@@ -169,20 +181,30 @@ class Lattice():
             return float(polariz / (self.number * self.number))
     ###########################################################################################
 
-    def energyOf_1D(self, l):
+    def energy_flipSpin_1D(self, l):
+        return 2 * self.L[l].direction * self.energy1D_Of(l)
+	
 
+    def energy_flipSpin_2D(self, l , k):
+        return 2 * self.L[l][k].direction * self.energy2D_Of(l,k)
+    ###########################################################################################
+
+    def energy1D_Of(self, l):
         '''Calculation of single Spin energy'''
-
-        return -1 * self.Jfactor * self.L[l].direction *\
-				(self.L[self.period(l-1)].direction + self.L[self.period(l+1)].direction)
+        summ =	self.L[self.period(l-1)].direction +\
+				        self.L[self.period(l+1)].direction
+        return self.Jfactor * summ + self.magfactor
     
-    def energyOf_2D(self, l, k):
 
-        ''' Calculation of single Spin energy'''
 
-        return -1 * self.Jfactor * self.L[l][k].direction *\
-				(self.L[self.period(l-1)][k].direction + self.L[self.period(l+1)][k].direction+ \
-                    self.L[l][self.period(k-1)].direction + self.L[l][self.period(k+1)].direction) 
+    def energy2D_Of(self, l, k):
+            ''' Calculation of single Spin energy'''
+            summ =	self.L[self.period(l-1)][k].direction +\
+				            self.L[self.period(l+1)][k].direction +\
+				            self.L[l][self.period(k-1)].direction +\
+				            self.L[l][self.period(k+1)].direction
+
+            return self.Jfactor * summ + self.magfactor
     ###########################################################################################
 
     def flipSpin_1D(self, l):
@@ -221,16 +243,54 @@ class Lattice():
         """Return the spin to its orginal state for 2 dimiension"""
         return self.L[l][k].direction
     ###########################################################################################
-
     def readInputFile(self, filename):
         read = open(filename, 'r')
-        str_L = read.readline().split(',')
-        temp_lattice=[int(x) for x in str_L]
-        if len(temp_lattice) - 1 == temp_lattice[0]:
-            for i in range(self.number):
-                self.L.append(Spin(temp_lattice[i + 1]))
-        else:
-            exit()
+        while True:
+            str_L = read.readline().strip().split(',')
+            print(str_L)
+            if len(str_L)==2 and int(str_L[1])==self.dim:
+                print("The inputfile has been detected!")
+                break
+            elif len(str_L)>2 or len(str_L)<2:
+                print("something is wrong in your inputfile")
+                exit()
+
+        if self.dim==1:
+            temp=[int(x) for x in str_L]
+            if temp[0]==self.number:
+                while True:
+                    lattice = read.readline().strip().split(',')
+                    if len(lattice) == self.number:
+                        break
+                    else:
+                        print("Number of spins are not equal with the reported value in source code")
+                        exit()
+                lattice = [int(x) for x in lattice]
+                for i in range(self.number):
+                    self.L.append(Spin(lattice[i]))
+            else:
+                print("Number of spin is not compatible with the source code")
+                exit()
+
+        elif self.dim==2:
+            temp=[int(x) for x in str_L]
+            if temp[0]==self.number:
+                for l in range(self.number):
+                    while True:
+                        lattice = read.readline().strip().split(',')
+                        if len(lattice) == self.number:
+                            break
+                        else:
+                            print("Number of spins are not equal with the reported value in source code")
+                            exit()
+                    lattice = [int(x) for x in lattice]
+                    dummy=[]
+                    for i in range(self.number):
+                        dummy.append(Spin(lattice[i]))
+                    self.L.append(dummy)
+            else:
+                print("Number of spin is not compatible with the source code")
+                exit()
 	###########################################################################################
     def GetVariance(self, Xbar, X): 
         '''Takes Variance from input values
