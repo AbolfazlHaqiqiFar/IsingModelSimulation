@@ -8,18 +8,19 @@ def main():
     out = open("data.ising", "w")
 
     dt = 0.010
-    for t in range(200,401):
+    for t in range(180,300):
         print("temp: {:6.4f}".format(t*dt))
-        medium = Medium(num = 8,
+        medium = Medium(num = 64,
 				dim = 2,
 				initial_config = "ordered",
 				inputFilename="lattice.data",
 				outputfilename='trajectory.xyz',
-				dump_step=0,
+				dump_evolution=1500,
+				dump_relaxation=0,
 				initial_direction = 1,
         J= 1,
         h = 0,
-				steps = 50,
+				steps = 150000,
 				temp = t*dt,
 				display=True )
 

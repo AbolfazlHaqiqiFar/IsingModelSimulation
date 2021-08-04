@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 X, Y = [], []
-for line in open('Data2', 'r'):
+for line in open('data.ising', 'r'):
   values = [float(s) for s in line.split()]
   X.append(values[1])
   Y.append(values[2])
