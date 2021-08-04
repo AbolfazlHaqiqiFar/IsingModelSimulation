@@ -20,12 +20,12 @@ def main():
 				initial_direction = 1,
         J= 1,
         h = 0,
-				steps = 150000,
+				steps = 15000,
 				temp = t*dt,
 				display=True )
 
         aveE, varE, aveP, varP = medium.Evolution(display=False)
-        print("%-5.3f\t%-5.3f\t%-5.3f\t%-5.3f\t%-5.3f" %(t*dt,aveE,varE,aveP,varP), file=out)
+        print("%-5.3f\t%-5.3f\t%-5.3f\t%-5.3f\t%-5.3f" %(t*dt,aveE,varE,aveP,varP), file=out, flush=True)
 
         medium.WriteTheLattice()
         print("#", "-"*70)
