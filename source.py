@@ -7,8 +7,8 @@ from medium import Medium
 def main():
     out = open("data.ising", "w")
 
-    dt = 0.010
-    for t in range(180,300):
+    dt = 0.10
+    for t in range(-30,30):
         print("temp: {:6.4f}".format(t*dt))
         medium = Medium(num = 64,
 				dim = 2,
@@ -19,9 +19,9 @@ def main():
 				dump_relaxation=0,
 				initial_direction = 1,
         J= 1,
-        h = 0,
+        h = t*dt,
 				steps = 15000,
-				temp = t*dt,
+				temp = 0.5,
 				display=True )
 
         aveE, varE, aveP, varP = medium.Evolution(display=False)
