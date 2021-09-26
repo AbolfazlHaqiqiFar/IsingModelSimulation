@@ -1,6 +1,6 @@
 
 # Abolfazl Haqiqifar
-#Imail : afzhqq@gmail.com
+#Imail : afzhqq@gmail.com  
 
 
 from spin import Spin
