@@ -1,4 +1,4 @@
-# Russell Kajouri & Abolfazl Haqiqifar
+#  Abolfazl Haqiqifar
 #Imail : afzhqq@gmail.com
 
 from lattice import Lattice
